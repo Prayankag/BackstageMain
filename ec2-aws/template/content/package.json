@@ -1,0 +1,10 @@
+{
+  "name": "backstage-ec2-template",
+  "version": "1.0.0",
+  "description": "Backstage template for creating EC2 instances on AWS",
+  "dependencies": {
+    "@backstage/plugin-scaffolder-backend": "^1.11.0",
+    "aws-sdk": "^2.1373.0",
+    "terraform": "^0.14.0"
+  }
+}

@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: ${{ values.name }}
+  description: ${{ values.description }}
+spec:
+  owner: ${{ values.owner }}
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}
+  description: ${{ values.description }}
+  annotations:
+     backstage.io/techdocs-ref: dir:./docs
+     github.com/project-slug: ${{ values.repo_owner }}/${{ values.repo_name }}
+     github-actions: enabled
+     github.com/workflows: |
+      [
+        {
+          "workflow": "instance.yaml",
+          "label": "Start",
+          "tooltip": "click here and start the workflow process"
+        }
+      ]
+spec:
+  type: service
+  owner: ${{ values.owner }}
+  lifecycle: experimental
+  system: ${{ values.name }}
+  providesApis:
+    - ${{ values.name }}
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: ${{ values.name }}
+  description: ${{ values.description }}
+spec:
+  type: internal
+  lifecycle: experimental
+  owner: ${{ values.owner }}
+  system: ${{ values.name }}
+  definition: "${{ values.description }}"

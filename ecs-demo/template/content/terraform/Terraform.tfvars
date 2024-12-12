@@ -1,0 +1,17 @@
+region              = "us-east-1a"
+cluster_name        = "cluster"
+task_family         = "task"
+network_mode        = "awsvpc"
+task_cpu            = "256"
+task_memory         = "512"
+container_name      = "example-container"
+container_image     = "nginx"  
+container_cpu       = "256"
+container_memory    = "512"
+container_port      = 80
+host_port           = 80
+service_name        = "service"
+desired_count       = 1
+subnet_ids          = ["subnet-099752bfdab6923e5"] 
+security_group_ids  = ["sg-03892d21e850925ff"]     
+assign_public_ip    = true

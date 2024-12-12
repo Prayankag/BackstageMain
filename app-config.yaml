@@ -1,0 +1,219 @@
+app:
+  title: Scaffolded Backstage App
+  baseUrl: http://localhost:3000
+
+organization:
+  name: ValueMomentum
+
+backend:
+  # Used for enabling authentication, secret is shared by all backend plugins
+  # See https://backstage.io/docs/auth/service-to-service-auth for
+  # information on the format
+  # auth:
+  #   keys:
+  #     - secret: ${BACKEND_SECRET}
+  baseUrl: http://localhost:7007
+  listen:
+    port: 7007
+    # Uncomment the following host directive to bind to specific interfaces
+    # host: 127.0.0.1
+  csp:
+    connect-src: ["'self'", 'http:', 'https:']
+    # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
+    # Default Helmet Content-Security-Policy values can be removed by setting the key to false
+  cors:
+    origin: http://localhost:3000
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
+  # This is for local development only, it is not recommended to use this in production
+  # The production database configuration is stored in app-config.production.yaml
+  database:
+    client: pg
+    connection:
+      host: backstage-azure.postgres.database.azure.com
+      port: 5432
+      user: backstage
+      password: Vamsi560
+  
+  # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
+
+integrations:
+  azure:
+    - host: dev.azure.com
+      token: "1NiGoaHBUQZ9dEMm1BbucZVHZNIsslAGmIe5Ou2jgrImLnAcA5otJQQJ99ALACAAAAAAhliiAAASAZDO6mjy"
+
+  github:
+    - host: github.com
+      # This is a Personal Access Token or PAT from GitHub. You can find out how to generate this token, and more information
+      # about setting up the GitHub integration here: https://backstage.io/docs/integrations/github/locations#configuration
+      token: "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"
+    ### Example for how to add your GitHub Enterprise instance using the API:
+    # - host: ghe.example.net
+    #   apiBaseUrl: https://ghe.example.net/api/v3
+    #   token: ${GHE_TOKEN}
+ 
+  github-actions:
+    - url: "https://github.com/your-repo/actions"
+  
+  gitlab:
+    - host: gitlab.com
+      token: "glpat-Foxzq3fCAr5-zfzJPGNV"
+  
+proxy:
+  '/api/auth/microsoft':
+    target: 'http://localhost:7007'
+    headers:
+      host: 'localhost:7007'
+
+# Reference documentation http://backstage.io/docs/features/techdocs/configuration
+# Note: After experimenting with basic setup, use CI/CD to generate docs
+# and an external cloud storage when deploying TechDocs for production use-case.
+# https://backstage.io/docs/features/techdocs/how-to-guides#how-to-migrate-from-techdocs-basic-to-recommended-deployment-approach
+techdocs:
+  builder: 'local' # Alternatives - 'external'
+  generator:
+    runIn: 'docker' # Alternatives - 'local'
+  publisher:
+    type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
+
+auth:
+  allowGuestAccess: true
+  environemnts: developement
+  providers:
+    github:
+      development:
+        clientId: '77964ceebb205edfda6f'
+        clientSecret: '1fed86f02df513f09361c548940dfb104c730b5a'
+        signIn:
+          resolvers:
+            - resolver: usernameMatchingUserEntityName
+    microsoft:
+      development:
+        clientId: 4f6142c4-f114-48ae-9eaf-152ea5c628b1
+        clientSecret: 8Y38Q~Z2NALUvGb~RHzADYf6lLJkMzAkSoLqsc0z
+        tenantId: 5f3ec70f-0215-4f44-bdab-f5beda7cdd74
+        domainHint: 5f3ec70f-0215-4f44-bdab-f5beda7cdd74
+        signIn:
+          resolvers:
+            - resolver: userIdMatchingUserEntityAnnotation
+   
+    guest: {}
+
+scaffolder:
+  secrets:
+    azurePat: "1NiGoaHBUQZ9dEMm1BbucZVHZNIsslAGmIe5Ou2jgrImLnAcA5otJQQJ99ALACAAAAAAhliiAAASAZDO6mjy"
+  workingDirectory: 'C:\Users\azureuser\demo-backstage\Temp\'
+  
+catalog:
+  providers:
+    azure:
+      AzureDevOpsEntityProvider:
+        host: dev.azure.com
+        organization: prayankagochipatula
+        project: Backstage
+        repositoryPattern: '.*' # Matches all repositories
+        branch: main # Default branch to fetch metadata from
+        token: "1NiGoaHBUQZ9dEMm1BbucZVHZNIsslAGmIe5Ou2jgrImLnAcA5otJQQJ99ALACAAAAAAhliiAAASAZDO6mjy"
+
+    gitlab:
+      yourProviderId:
+        host: gitlab.com
+        orgEnabled: true
+        group: groups/cloud-ec # Required for gitlab.com when `orgEnabled: true`. Optional for self managed. Must not end with slash. Accepts only groups under the provided path (which will be stripped)
+        relations: # Optional
+          - INHERITED # Optional. Members of any ancestor groups will also be considered members of the current group.
+          - DESCENDANTS # Optional. Members of any descendant groups will also be considered members of the current group.
+          - SHARED_FROM_GROUPS # Optional. Members of any invited groups will also be considered members of the current group.
+        groupPattern: '[\s\S]*' # Optional. Filters found groups based on provided pattern. Defaults to `[\s\S]*`, which means to not filter anything
+        schedule: # Same options as in SchedulerServiceTaskScheduleDefinition. Optional for the Legacy Backend System.
+          # supports cron, ISO duration, "human duration" as used in code
+          frequency: { minutes: 30 }
+          # supports ISO duration, "human duration" as used in code
+          timeout: { minutes: 3 }
+    microsoftGraphOrg: 
+      providerId:
+        target: https://graph.microsoft.com/v1.0
+        authority: https://login.microsoftonline.com
+        tenantId: 5f3ec70f-0215-4f44-bdab-f5beda7cdd74
+        clientId: 4f6142c4-f114-48ae-9eaf-152ea5c628b1
+        clientSecret: 8Y38Q~Z2NALUvGb~RHzADYf6lLJkMzAkSoLqsc0z
+        queryMode: basic
+  import:
+    entityFilename: catalog-info.yaml
+    pullRequestBranchName: backstage-integration
+  rules:
+    - allow: [Component, System, API, Resource, Location]
+  locations:
+    # Local example data, file locations are relative to the backend process, typically `packages/backend`
+    - type: file
+      target: ../../examples/entities.yaml
+
+    # Local example template
+    - type: file
+      target: ../../ec2-workingdemo/template/template.yaml
+      rules:
+        - allow: [Template]
+    # Local example template
+    - type: file
+      target: ../../ecs-demo/template/template.yaml
+      rules:
+        - allow: [Template]
+    # Local example template
+    - type: file
+      target: ../../ec2-workingdemo/template/template.yaml
+      rules:
+        - allow: [Template]
+    # Local example template
+    - type: file
+      target: ../../golang/template/golang.yaml
+      rules:
+        - allow: [Template]
+    # Local example template
+    - type: file
+      target: ../../gitlab-demo/template/template.yaml
+      rules:
+        - allow: [Template]
+    # Local example template
+    - type: file
+      target: ../../azure-devops/template/template.yaml
+      rules:
+        - allow: [Template]
+    # Local example template
+    - type: file
+      target: ../../azure-devops2/template/template.yaml
+      rules:
+        - allow: [Template]
+    
+
+    # Local example organizational data
+    - type: file
+      target: ../../examples/org.yaml
+      rules:
+        - allow: [User, Group]
+
+    ## Uncomment these lines to add more example data
+    # - type: url
+    #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
+
+    ## Uncomment these lines to add an example org
+    # - type: url
+    #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
+    #   rules:
+    #     - allow: [User, Group]
+
+kubernetes:
+  # see https://backstage.io/docs/features/kubernetes/configuration for kubernetes configuration options
+
+# see https://backstage.io/docs/permissions/getting-started for more on the permission framework
+permission:
+  # setting this to `false` will disable permissions
+  enabled: true
+logging:
+  level: info
+  transports:
+    - type: file
+      options:
+        filename: ./logs/backstage.log
+        maxsize: 10485760 # 10 MB
+        maxFiles: 5
+
